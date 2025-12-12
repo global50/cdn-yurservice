@@ -78,35 +78,28 @@ export async function loadYurServiceMicrofrontend(
         return new Promise((resolve, reject) => {
           const moduleUrl = `${cdnUrl}/yurservice-microfrontend.js`
           
-          import(/* @vite-ignore */ moduleUrl)
-            .then((mod) => {
+          const script = document.createElement('script')
+          script.type = 'module'
+          script.src = moduleUrl
+          
+          script.onload = async () => {
+            try {
+              await new Promise(resolve => setTimeout(resolve, 300))
+              const mod = await import(/* @vite-ignore */ moduleUrl)
               microfrontendModule = mod
               resolve(mod)
-            })
-            .catch((error) => {
-              console.error('Direct import failed, trying script tag:', error)
-              
-              const script = document.createElement('script')
-              script.type = 'module'
-              script.src = moduleUrl
-              
-              script.onload = async () => {
-                try {
-                  await new Promise(resolve => setTimeout(resolve, 200))
-                  const mod = await import(/* @vite-ignore */ moduleUrl)
-                  microfrontendModule = mod
-                  resolve(mod)
-                } catch (importError) {
-                  reject(new Error(`Failed to import microfrontend: ${importError}`))
-                }
-              }
-              
-              script.onerror = () => {
-                reject(new Error(`Failed to load microfrontend script from: ${moduleUrl}`))
-              }
-              
-              document.head.appendChild(script)
-            })
+            } catch (importError) {
+              console.error('Import after script load failed:', importError)
+              reject(new Error(`Failed to import microfrontend: ${importError}`))
+            }
+          }
+          
+          script.onerror = (error) => {
+            console.error('Script load error:', error)
+            reject(new Error(`Failed to load microfrontend script from: ${moduleUrl}. Check browser console for CORS errors.`))
+          }
+          
+          document.head.appendChild(script)
         })
       } else {
         const script = document.createElement('script')
