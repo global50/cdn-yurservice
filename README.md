@@ -20,10 +20,10 @@
    
    **Альтернатива с хэшем коммита (для обхода кэша, рекомендуется):**
    ```env
-   VITE_YURSERVICE_CDN_URL=https://cdn.jsdelivr.net/gh/global50/remote-yurservice-cdn@b4347b3/dist
+   VITE_YURSERVICE_CDN_URL=https://cdn.jsdelivr.net/gh/global50/remote-yurservice-cdn@1185bbb/dist
    ```
    
-   ⚠️ **Важно:** Используйте хэш коммита `b4347b3` (не `73d1f39...`). Старый хэш больше не работает.
+   ⚠️ **Важно:** Используйте актуальный хэш коммита. CSS файл теперь загружается автоматически.
    
    **Примечание:** jsDelivr может кэшировать файлы. Используйте хэш коммита для получения последней версии.
 
