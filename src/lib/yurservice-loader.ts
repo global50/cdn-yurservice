@@ -1,4 +1,6 @@
 import { supabase } from './supabase'
+import * as React from 'react'
+import * as ReactDOM from 'react-dom'
 
 export interface YurServiceMicrofrontendConfig {
   cdnUrl?: string
@@ -6,43 +8,22 @@ export interface YurServiceMicrofrontendConfig {
 
 let microfrontendModule: any = null
 let loadingPromise: Promise<any> | null = null
-let importMapsEnsured = false
 
-async function ensureImportMaps() {
-  if (importMapsEnsured) return
-  
-  const existingImportMap = document.querySelector('script[type="importmap"]')
-  if (existingImportMap) {
-    importMapsEnsured = true
+function ensureReactInWindow() {
+  if ((window as any).React && (window as any).ReactDOM) {
     return
   }
 
-  const importMap = {
-    imports: {
-      'react': '/node_modules/react/index.js',
-      'react-dom': '/node_modules/react-dom/index.js',
-      'react/jsx-runtime': '/node_modules/react/jsx-runtime.js',
-      '@supabase/supabase-js': '/node_modules/@supabase/supabase-js/dist/esm/index.js'
+  (window as any).React = React
+  (window as any).ReactDOM = ReactDOM
+  
+  if (React.jsx && !(window as any).ReactJSXRuntime) {
+    (window as any).ReactJSXRuntime = {
+      jsx: React.jsx,
+      jsxs: React.jsxs || React.jsx,
+      Fragment: React.Fragment,
     }
   }
-
-  const script = document.createElement('script')
-  script.type = 'importmap'
-  script.textContent = JSON.stringify(importMap)
-  document.head.insertBefore(script, document.head.firstChild)
-  
-  await new Promise(resolve => {
-    script.addEventListener('load', () => {
-      setTimeout(() => {
-        importMapsEnsured = true
-        resolve(undefined)
-      }, 100)
-    }, { once: true })
-    setTimeout(() => {
-      importMapsEnsured = true
-      resolve(undefined)
-    }, 300)
-  })
 }
 
 export async function loadYurServiceMicrofrontend(
@@ -73,32 +54,26 @@ export async function loadYurServiceMicrofrontend(
       const useProductionFile = !isLocalDev
       
       ;(window as any).__SUPABASE_CLIENT__ = supabase
+      ensureReactInWindow()
 
       if (useProductionFile) {
-        await ensureImportMaps()
-        
         return new Promise((resolve, reject) => {
-          const moduleUrl = `${cdnUrl}/yurservice-microfrontend.js`
-          
           const script = document.createElement('script')
-          script.type = 'module'
-          script.src = moduleUrl
+          script.src = `${cdnUrl}/yurservice-microfrontend.umd.js`
           
-          script.onload = async () => {
-            try {
-              await new Promise(resolve => setTimeout(resolve, 300))
-              const mod = await import(/* @vite-ignore */ moduleUrl)
-              microfrontendModule = mod
-              resolve(mod)
-            } catch (importError) {
-              console.error('Import after script load failed:', importError)
-              reject(new Error(`Failed to import microfrontend: ${importError}`))
+          script.onload = () => {
+            const module = (window as any).YurServiceMicrofrontend
+            if (module) {
+              microfrontendModule = module
+              resolve(module)
+            } else {
+              reject(new Error('YurServiceMicrofrontend not found in window object'))
             }
           }
           
           script.onerror = (error) => {
             console.error('Script load error:', error)
-            reject(new Error(`Failed to load microfrontend script from: ${moduleUrl}. Check browser console for CORS errors.`))
+            reject(new Error(`Failed to load microfrontend script from: ${cdnUrl}/yurservice-microfrontend.umd.js`))
           }
           
           document.head.appendChild(script)
