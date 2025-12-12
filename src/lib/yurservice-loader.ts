@@ -10,20 +10,38 @@ let microfrontendModule: any = null
 let loadingPromise: Promise<any> | null = null
 
 function ensureReactInWindow() {
-  if ((window as any).React && (window as any).ReactDOM) {
+  // Check if React is already available and has useState
+  if ((window as any).React && (window as any).React.useState) {
     return
   }
 
-  (window as any).React = React
-  (window as any).ReactDOM = ReactDOM
+  // Export React to window - UMD modules expect React to be available globally
+  // Make sure we export the actual React object with all its methods
+  const ReactObj = React as any
+  const ReactDOMObj = ReactDOM as any
   
-  if (React.jsx && !(window as any).ReactJSXRuntime) {
-    (window as any).ReactJSXRuntime = {
-      jsx: React.jsx,
-      jsxs: React.jsxs || React.jsx,
-      Fragment: React.Fragment,
-    }
+  // Set React and ReactDOM on window
+  ;(window as any).React = ReactObj.default || ReactObj
+  ;(window as any).ReactDOM = ReactDOMObj.default || ReactDOMObj
+  
+  // Ensure all React exports are available
+  if (!(window as any).React.useState) {
+    // If default export doesn't have useState, use the namespace directly
+    ;(window as any).React = ReactObj
+    ;(window as any).ReactDOM = ReactDOMObj
   }
+  
+  // Verify React is properly exported
+  if (!(window as any).React || !(window as any).React.useState) {
+    console.error('Failed to export React to window. React object:', React)
+    throw new Error('React could not be exported to window')
+  }
+  
+  console.log('React exported to window:', {
+    hasReact: !!(window as any).React,
+    hasUseState: !!(window as any).React?.useState,
+    hasReactDOM: !!(window as any).ReactDOM
+  })
 }
 
 export async function loadYurServiceMicrofrontend(
