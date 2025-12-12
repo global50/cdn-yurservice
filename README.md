@@ -15,12 +15,15 @@
    ```env
    VITE_SUPABASE_URL=your_supabase_url
    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-   VITE_YURSERVICE_CDN_URL=https://raw.githubusercontent.com/global50/remote-yurservice-cdn/main/dist
+   VITE_YURSERVICE_CDN_URL=https://cdn.jsdelivr.net/gh/global50/remote-yurservice-cdn@main/dist
    ```
    
-   **Примечание:** Используйте `raw.githubusercontent.com` для немедленного доступа к последней версии. 
-   Для production можно использовать `https://cdn.jsdelivr.net/gh/global50/remote-yurservice-cdn@main/dist` 
-   (но может потребоваться время для обновления кэша CDN).
+   **Альтернатива с хэшем коммита (для обхода кэша):**
+   ```env
+   VITE_YURSERVICE_CDN_URL=https://cdn.jsdelivr.net/gh/global50/remote-yurservice-cdn@fda423143f397af116d276d774c5774b6021f2cf/dist
+   ```
+   
+   **Примечание:** jsDelivr может кэшировать файлы. Используйте хэш коммита для получения последней версии.
 
 3. Микрофронтенд автоматически загрузится с CDN при переходе на `/yurservice`
 
