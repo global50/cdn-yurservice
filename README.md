@@ -18,9 +18,9 @@
    VITE_YURSERVICE_CDN_URL=https://cdn.jsdelivr.net/gh/global50/remote-yurservice-cdn@main/dist
    ```
    
-   **Альтернатива с хэшем коммита (для обхода кэша):**
+   **Альтернатива с хэшем коммита (для обхода кэша, рекомендуется):**
    ```env
-   VITE_YURSERVICE_CDN_URL=https://cdn.jsdelivr.net/gh/global50/remote-yurservice-cdn@fda423143f397af116d276d774c5774b6021f2cf/dist
+   VITE_YURSERVICE_CDN_URL=https://cdn.jsdelivr.net/gh/global50/remote-yurservice-cdn@3bd7faa24cb46c3d25a1a610ef9d08433688b6b9/dist
    ```
    
    **Примечание:** jsDelivr может кэшировать файлы. Используйте хэш коммита для получения последней версии.
