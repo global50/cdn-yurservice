@@ -57,36 +57,37 @@ export async function loadYurServiceMicrofrontend(
       ensureReactInWindow()
 
       if (useProductionFile) {
+        // CRITICAL: Ensure React is synchronously available BEFORE script loads
+        // UMD module executes immediately when script tag is added to DOM
+        ensureReactInWindow()
+        
+        // Double-check React is available
+        if (!(window as any).React || !(window as any).ReactDOM) {
+          return Promise.reject(new Error('React or ReactDOM not available in window. Cannot load microfrontend.'))
+        }
+        
         return new Promise((resolve, reject) => {
-          // Ensure React is available before loading UMD module
-          ensureReactInWindow()
+          const script = document.createElement('script')
+          script.src = `${cdnUrl}/yurservice-microfrontend.umd.js`
           
-          // Wait a bit to ensure React is fully set
-          setTimeout(() => {
-            const script = document.createElement('script')
-            script.src = `${cdnUrl}/yurservice-microfrontend.umd.js`
-            
-            script.onload = () => {
-              // UMD module executes immediately, so React must be available
-              // Check if module was created successfully
-              setTimeout(() => {
-                const module = (window as any).YurServiceMicrofrontend
-                if (module && module.YurServicePage) {
-                  microfrontendModule = module
-                  resolve(module)
-                } else {
-                  reject(new Error('YurServiceMicrofrontend not found or incomplete in window object. React may not be available.'))
-                }
-              }, 100)
+          script.onload = () => {
+            // UMD module should have executed and created window.YurServiceMicrofrontend
+            const module = (window as any).YurServiceMicrofrontend
+            if (module && module.YurServicePage) {
+              microfrontendModule = module
+              resolve(module)
+            } else {
+              console.error('Available in window:', Object.keys(window).filter(k => k.includes('React') || k.includes('Yur')))
+              reject(new Error('YurServiceMicrofrontend not found or incomplete. React may not be available when module executed.'))
             }
-            
-            script.onerror = (error) => {
-              console.error('Script load error:', error)
-              reject(new Error(`Failed to load microfrontend script from: ${cdnUrl}/yurservice-microfrontend.umd.js`))
-            }
-            
-            document.head.appendChild(script)
-          }, 50)
+          }
+          
+          script.onerror = (error) => {
+            console.error('Script load error:', error)
+            reject(new Error(`Failed to load microfrontend script from: ${cdnUrl}/yurservice-microfrontend.umd.js`))
+          }
+          
+          document.head.appendChild(script)
         })
       } else {
         const script = document.createElement('script')
