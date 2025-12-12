@@ -35,9 +35,6 @@ function AppContent() {
             </div>
           </main>
         </div>
-        {/* <div className="hidden lg:block p-4">
-          <Chats />
-        </div> */}
       </div>
       <MobileNav />
     </div>
