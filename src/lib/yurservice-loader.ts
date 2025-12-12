@@ -19,10 +19,10 @@ async function ensureImportMaps() {
 
   const importMap = {
     imports: {
-      'react': 'https://esm.sh/react@18.3.1',
-      'react-dom': 'https://esm.sh/react-dom@18.3.1',
-      'react/jsx-runtime': 'https://esm.sh/react@18.3.1/jsx-runtime',
-      '@supabase/supabase-js': 'https://esm.sh/@supabase/supabase-js@2.57.0'
+      'react': '/node_modules/react/index.js',
+      'react-dom': '/node_modules/react-dom/index.js',
+      'react/jsx-runtime': '/node_modules/react/jsx-runtime.js',
+      '@supabase/supabase-js': '/node_modules/@supabase/supabase-js/dist/esm/index.js'
     }
   }
 
@@ -36,12 +36,12 @@ async function ensureImportMaps() {
       setTimeout(() => {
         importMapsEnsured = true
         resolve(undefined)
-      }, 50)
+      }, 100)
     }, { once: true })
     setTimeout(() => {
       importMapsEnsured = true
       resolve(undefined)
-    }, 200)
+    }, 300)
   })
 }
 
@@ -75,6 +75,8 @@ export async function loadYurServiceMicrofrontend(
       ;(window as any).__SUPABASE_CLIENT__ = supabase
 
       if (useProductionFile) {
+        await ensureImportMaps()
+        
         return new Promise((resolve, reject) => {
           const moduleUrl = `${cdnUrl}/yurservice-microfrontend.js`
           
