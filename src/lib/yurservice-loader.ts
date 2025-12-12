@@ -75,48 +75,38 @@ export async function loadYurServiceMicrofrontend(
       ;(window as any).__SUPABASE_CLIENT__ = supabase
 
       if (useProductionFile) {
-        await ensureImportMaps()
-        
         return new Promise((resolve, reject) => {
-          const script = document.createElement('script')
-          script.type = 'module'
-          script.src = `${cdnUrl}/yurservice-microfrontend.js`
+          const moduleUrl = `${cdnUrl}/yurservice-microfrontend.js`
           
-          script.onload = async () => {
-            try {
-              await new Promise(resolve => setTimeout(resolve, 100))
-              const mod = await import(/* @vite-ignore */ `${cdnUrl}/yurservice-microfrontend.js`)
+          import(/* @vite-ignore */ moduleUrl)
+            .then((mod) => {
               microfrontendModule = mod
               resolve(mod)
-            } catch (error) {
-              console.error('ES module import failed, trying UMD fallback:', error)
-              try {
-                const umdScript = document.createElement('script')
-                umdScript.src = `${cdnUrl}/yurservice-microfrontend.umd.js`
-                umdScript.onload = () => {
-                  const umdModule = (window as any).YurServiceMicrofrontend
-                  if (umdModule) {
-                    microfrontendModule = umdModule
-                    resolve(umdModule)
-                  } else {
-                    reject(new Error('UMD module not found in window.YurServiceMicrofrontend'))
-                  }
+            })
+            .catch((error) => {
+              console.error('Direct import failed, trying script tag:', error)
+              
+              const script = document.createElement('script')
+              script.type = 'module'
+              script.src = moduleUrl
+              
+              script.onload = async () => {
+                try {
+                  await new Promise(resolve => setTimeout(resolve, 200))
+                  const mod = await import(/* @vite-ignore */ moduleUrl)
+                  microfrontendModule = mod
+                  resolve(mod)
+                } catch (importError) {
+                  reject(new Error(`Failed to import microfrontend: ${importError}`))
                 }
-                umdScript.onerror = () => {
-                  reject(new Error(`Failed to load microfrontend from: ${cdnUrl}/yurservice-microfrontend.umd.js`))
-                }
-                document.head.appendChild(umdScript)
-              } catch (umdError) {
-                reject(new Error(`Failed to import microfrontend: ${error}`))
               }
-            }
-          }
-          
-          script.onerror = () => {
-            reject(new Error(`Failed to load microfrontend script from: ${cdnUrl}/yurservice-microfrontend.js`))
-          }
-          
-          document.head.appendChild(script)
+              
+              script.onerror = () => {
+                reject(new Error(`Failed to load microfrontend script from: ${moduleUrl}`))
+              }
+              
+              document.head.appendChild(script)
+            })
         })
       } else {
         const script = document.createElement('script')
