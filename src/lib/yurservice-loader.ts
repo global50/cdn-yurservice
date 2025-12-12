@@ -31,8 +31,18 @@ async function ensureImportMaps() {
   script.textContent = JSON.stringify(importMap)
   document.head.insertBefore(script, document.head.firstChild)
   
-  await new Promise(resolve => setTimeout(resolve, 100))
-  importMapsEnsured = true
+  await new Promise(resolve => {
+    script.addEventListener('load', () => {
+      setTimeout(() => {
+        importMapsEnsured = true
+        resolve(undefined)
+      }, 50)
+    }, { once: true })
+    setTimeout(() => {
+      importMapsEnsured = true
+      resolve(undefined)
+    }, 200)
+  })
 }
 
 export async function loadYurServiceMicrofrontend(
