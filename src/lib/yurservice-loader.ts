@@ -85,6 +85,18 @@ export async function loadYurServiceMicrofrontend(
         }
         
         return new Promise((resolve, reject) => {
+          // Load CSS first
+          const link = document.createElement('link')
+          link.rel = 'stylesheet'
+          link.href = `${cdnUrl}/yurservice-microfrontend.umd.css`
+          
+          link.onerror = () => {
+            console.warn('CSS file not found, continuing without styles')
+          }
+          
+          document.head.appendChild(link)
+          
+          // Then load JS
           const script = document.createElement('script')
           script.src = `${cdnUrl}/yurservice-microfrontend.umd.js`
           
