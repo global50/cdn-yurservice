@@ -1,0 +1,1 @@
+export const UNAUTH_CODE = 401;

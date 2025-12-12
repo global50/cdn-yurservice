@@ -1,0 +1,189 @@
+/* Shadcn Typography System - Base Styles */
+.ProseMirror,
+.post-content {
+  font-size: 1rem;
+  line-height: 1.75rem;
+  color: hsl(var(--foreground));
+  max-width: none;
+}
+
+/* H1 - Shadcn: scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl */
+.ProseMirror h1,
+.post-content h1 {
+  scroll-margin-top: 5rem;
+  font-weight: 800;
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  letter-spacing: -0.025em;
+  text-align: left;
+}
+
+@media (min-width: 1024px) {
+  .ProseMirror h1,
+  .post-content h1 {
+    font-size: 3rem;
+    line-height: 1;
+  }
+}
+
+/* H2 - Shadcn: mt-10 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight */
+.ProseMirror h2,
+.post-content h2 {
+  margin-top: 2.5rem;
+  scroll-margin-top: 5rem;
+  border-bottom: 1px solid hsl(var(--border));
+  padding-bottom: 0.5rem;
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.ProseMirror h2:first-child,
+.post-content h2:first-child {
+  margin-top: 0;
+}
+
+/* H3 - Shadcn: mt-8 scroll-m-20 text-2xl font-semibold tracking-tight */
+.ProseMirror h3,
+.post-content h3 {
+  margin-top: 2rem;
+  scroll-margin-top: 5rem;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+/* H4 - Shadcn: mt-8 scroll-m-20 text-xl font-semibold tracking-tight */
+.ProseMirror h4,
+.post-content h4 {
+  margin-top: 2rem;
+  scroll-margin-top: 5rem;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+/* Paragraphs - Shadcn: leading-7 [&:not(:first-child)]:mt-6 */
+.ProseMirror p,
+.post-content p {
+  margin: 0;
+  line-height: 1.75rem;
+}
+
+.ProseMirror p:not(:first-child),
+.post-content p:not(:first-child) {
+  margin-top: 1.5rem;
+}
+
+/* Lists - Shadcn: my-6 ml-6 list-disc [&>li]:mt-2 */
+.ProseMirror ul,
+.post-content ul {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  margin-left: 1.5rem;
+  list-style-type: disc;
+}
+
+.ProseMirror ol,
+.post-content ol {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  margin-left: 1.5rem;
+  list-style-type: decimal;
+}
+
+.ProseMirror ul > li,
+.post-content ul > li,
+.ProseMirror ol > li,
+.post-content ol > li {
+  margin-top: 0.5rem;
+}
+
+/* Code blocks */
+.ProseMirror pre,
+.post-content pre {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  background: hsl(var(--muted));
+}
+
+/* Inline code - Shadcn: relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold */
+.ProseMirror code,
+.post-content code {
+  position: relative;
+  border-radius: 0.25rem;
+  background: hsl(var(--muted));
+  padding: 0.2rem 0.3rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono",
+    "Courier New", monospace;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.ProseMirror pre code,
+.post-content pre code {
+  background: transparent;
+  padding: 0;
+  font-weight: 400;
+  font-size: 1rem;
+}
+
+/* Blockquote - Shadcn: mt-6 border-l-2 pl-6 italic */
+.ProseMirror blockquote,
+.post-content blockquote {
+  margin-top: 1.5rem;
+  border-left: 2px solid hsl(var(--border));
+  padding-left: 1.5rem;
+  font-style: italic;
+  color: hsl(var(--muted-foreground));
+}
+
+/* Horizontal rule */
+.ProseMirror hr,
+.post-content hr {
+  margin: 2rem 0;
+  border: 0;
+  border-top: 1px solid hsl(var(--border));
+}
+
+/* Links - Shadcn: font-medium text-primary underline underline-offset-4 */
+.ProseMirror a,
+.post-content a {
+  font-weight: 500;
+  color: hsl(var(--primary));
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+.ProseMirror a:hover,
+.post-content a:hover {
+  opacity: 0.8;
+}
+
+/* Underline */
+.ProseMirror u,
+.post-content u {
+  text-decoration: underline;
+}
+
+/* Strikethrough */
+.ProseMirror s,
+.post-content s {
+  text-decoration: line-through;
+}
+
+/* Focus styles */
+.ProseMirror:focus {
+  outline: none;
+}
+
+.tiptap-toolbar .is-active {
+  background-color: hsl(var(--accent));
+}
