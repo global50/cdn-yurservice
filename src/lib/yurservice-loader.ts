@@ -76,10 +76,6 @@ export async function loadYurServiceMicrofrontend(
 
       if (useProductionFile) {
         await ensureImportMaps()
-      }
-
-      if (useProductionFile) {
-        await ensureImportMaps()
         
         return new Promise((resolve, reject) => {
           const script = document.createElement('script')
