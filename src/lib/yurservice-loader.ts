@@ -31,25 +31,25 @@ export async function loadYurServiceMicrofrontend(
       }
       const cdnUrl = config.cdnUrl || defaultCdnUrl
       
+      const isLocalDev = cdnUrl.includes('localhost') || cdnUrl.startsWith('http://127.0.0.1')
+      const useProductionFile = !isLocalDev
+      
       ;(window as any).__SUPABASE_CLIENT__ = supabase
 
       const script = document.createElement('script')
       script.type = 'module'
       
-      if (import.meta.env.PROD) {
-        script.src = `${cdnUrl}/yurservice-microfrontend.js`
-      } else {
-        script.src = `${cdnUrl}/src/index.ts`
-      }
+      const modulePath = useProductionFile
+        ? `${cdnUrl}/yurservice-microfrontend.js`
+        : `${cdnUrl}/src/index.ts`
+      
+      script.src = modulePath
 
       document.head.appendChild(script)
 
       return new Promise((resolve, reject) => {
         script.onload = async () => {
           try {
-            const modulePath = import.meta.env.PROD 
-              ? `${cdnUrl}/yurservice-microfrontend.js`
-              : `${cdnUrl}/src/index.ts`
             const mod = await import(/* @vite-ignore */ modulePath)
             microfrontendModule = mod
             resolve(mod)
@@ -66,9 +66,6 @@ export async function loadYurServiceMicrofrontend(
           }
         }
         script.onerror = () => {
-          const modulePath = import.meta.env.PROD 
-            ? `${cdnUrl}/yurservice-microfrontend.js`
-            : `${cdnUrl}/src/index.ts`
           import(/* @vite-ignore */ modulePath)
             .then((mod) => {
               microfrontendModule = mod
