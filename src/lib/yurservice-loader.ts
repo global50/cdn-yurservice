@@ -79,6 +79,8 @@ export async function loadYurServiceMicrofrontend(
       }
 
       if (useProductionFile) {
+        await ensureImportMaps()
+        
         return new Promise((resolve, reject) => {
           const script = document.createElement('script')
           script.type = 'module'
@@ -86,11 +88,31 @@ export async function loadYurServiceMicrofrontend(
           
           script.onload = async () => {
             try {
+              await new Promise(resolve => setTimeout(resolve, 100))
               const mod = await import(/* @vite-ignore */ `${cdnUrl}/yurservice-microfrontend.js`)
               microfrontendModule = mod
               resolve(mod)
             } catch (error) {
-              reject(new Error(`Failed to import microfrontend: ${error}`))
+              console.error('ES module import failed, trying UMD fallback:', error)
+              try {
+                const umdScript = document.createElement('script')
+                umdScript.src = `${cdnUrl}/yurservice-microfrontend.umd.js`
+                umdScript.onload = () => {
+                  const umdModule = (window as any).YurServiceMicrofrontend
+                  if (umdModule) {
+                    microfrontendModule = umdModule
+                    resolve(umdModule)
+                  } else {
+                    reject(new Error('UMD module not found in window.YurServiceMicrofrontend'))
+                  }
+                }
+                umdScript.onerror = () => {
+                  reject(new Error(`Failed to load microfrontend from: ${cdnUrl}/yurservice-microfrontend.umd.js`))
+                }
+                document.head.appendChild(umdScript)
+              } catch (umdError) {
+                reject(new Error(`Failed to import microfrontend: ${error}`))
+              }
             }
           }
           
