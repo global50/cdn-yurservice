@@ -58,25 +58,35 @@ export async function loadYurServiceMicrofrontend(
 
       if (useProductionFile) {
         return new Promise((resolve, reject) => {
-          const script = document.createElement('script')
-          script.src = `${cdnUrl}/yurservice-microfrontend.umd.js`
+          // Ensure React is available before loading UMD module
+          ensureReactInWindow()
           
-          script.onload = () => {
-            const module = (window as any).YurServiceMicrofrontend
-            if (module) {
-              microfrontendModule = module
-              resolve(module)
-            } else {
-              reject(new Error('YurServiceMicrofrontend not found in window object'))
+          // Wait a bit to ensure React is fully set
+          setTimeout(() => {
+            const script = document.createElement('script')
+            script.src = `${cdnUrl}/yurservice-microfrontend.umd.js`
+            
+            script.onload = () => {
+              // UMD module executes immediately, so React must be available
+              // Check if module was created successfully
+              setTimeout(() => {
+                const module = (window as any).YurServiceMicrofrontend
+                if (module && module.YurServicePage) {
+                  microfrontendModule = module
+                  resolve(module)
+                } else {
+                  reject(new Error('YurServiceMicrofrontend not found or incomplete in window object. React may not be available.'))
+                }
+              }, 100)
             }
-          }
-          
-          script.onerror = (error) => {
-            console.error('Script load error:', error)
-            reject(new Error(`Failed to load microfrontend script from: ${cdnUrl}/yurservice-microfrontend.umd.js`))
-          }
-          
-          document.head.appendChild(script)
+            
+            script.onerror = (error) => {
+              console.error('Script load error:', error)
+              reject(new Error(`Failed to load microfrontend script from: ${cdnUrl}/yurservice-microfrontend.umd.js`))
+            }
+            
+            document.head.appendChild(script)
+          }, 50)
         })
       } else {
         const script = document.createElement('script')
