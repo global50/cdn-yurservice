@@ -20,7 +20,7 @@
    
    **Альтернатива с хэшем коммита (для обхода кэша, рекомендуется):**
    ```env
-   VITE_YURSERVICE_CDN_URL=https://cdn.jsdelivr.net/gh/global50/remote-yurservice-cdn@1185bbb/dist
+   VITE_YURSERVICE_CDN_URL=https://cdn.jsdelivr.net/gh/global50/remote-yurservice-cdn@e2dd892/dist
    ```
    
    ⚠️ **Важно:** Используйте актуальный хэш коммита. CSS файл теперь загружается автоматически.
