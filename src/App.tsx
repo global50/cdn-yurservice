@@ -26,10 +26,22 @@ function AppContent() {
         <div className="flex flex-col flex-1 min-w-0">
           <Header />
           <main className="flex-1 p-4 overflow-y-auto">
-            <div className={isFullWidth ? "w-full" : "max-w-7xl mx-auto"}>
+            <div
+              className={isFullWidth ? "w-full" : "max-w-7xl mx-auto"}
+              style={{ isolation: 'isolate' }}
+            >
               <Routes>
                 <Route path="/" element={<HomePage />} />
-                <Route path="/yurservice" element={<YurServicePageWrapper />} />
+                <Route
+                  path="/yurservice"
+                  element={
+                    <div style={{ all: 'initial', display: 'block' }}>
+                      <div className="text-foreground">
+                        <YurServicePageWrapper />
+                      </div>
+                    </div>
+                  }
+                />
                 <Route path="*" element={<HomePage />} />
               </Routes>
             </div>

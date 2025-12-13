@@ -21,8 +21,17 @@ export function Navigation() {
   const { setTheme } = useTheme();
 
   return (
-    <aside className="hidden lg:flex lg:w-64 xl:w-72 flex-col h-full bg-background/30 overflow-hidden">
-      <div className="flex-1 p-4 space-y-4 overflow-y-auto">
+    <aside
+      data-sidebar="main"
+      className="lg:w-64 xl:w-72 h-full bg-background/30 overflow-hidden flex-shrink-0"
+      style={{
+        minWidth: '256px',
+        maxWidth: '288px',
+        position: 'relative',
+        zIndex: 40
+      }}
+    >
+      <div className="flex flex-col h-full p-4 space-y-4 overflow-y-auto">
         <Card className="shadow-sm hover:shadow-md transition-shadow duration-300">
           <CardHeader className="pb-3">
             <Link
